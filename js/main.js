@@ -217,17 +217,18 @@ function deleteHistory() {
 
 // Eventlyssnare
 
+// När formuläret skickas:
+
 form.addEventListener("submit", function(event) {
     event.preventDefault();
 
+// - validera inmatningen
     if (validateForm()) {
+        
+// - skapa studentkort om valideringen lyckas
         createStudentCard();
     }
 });
-
-// När formuläret skickas:
-// - validera inmatningen
-// - skapa studentkort om valideringen lyckas
 
 
 // När användaren klickar på "Rensa"
