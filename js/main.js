@@ -87,11 +87,36 @@ function displayErrors() {
 function createStudentCard() {
     // Hämta information från formuläret
 
+    const fullname = fullnameInput.value;
+    const email = emailInput.value;
+    const phone = phoneInput.value;
+    const font = fontSelect.value;
+
     // Uppdatera studentkortet
+
+    previewFullname.textContent = fullname;
+    previewEmail.textContent = email;
+    previewPhone.textContent = phone;
+    previewFullname.style.fontFamily = font;
+    previewEmail.style.fontFamily = font;
+    previewPhone.style.fontFamily = font;
 
     // Lägg till studentkortet i historiken
 
+    const studentCard = {
+        name: fullname,
+        email: email,
+        phone: phone,
+        font: font
+    };
+
+    history.push(studentCard);
+
+
     // Spara och uppdatera historiken
+
+    saveHistory();
+    renderHistory();
 }
 
 
@@ -100,6 +125,8 @@ function createStudentCard() {
  */
 function saveHistory() {
     // Spara history i localStorage
+
+    localStorage.setItem("history", JSON.stringify(history));
 }
 
 
@@ -108,8 +135,13 @@ function saveHistory() {
  */
 function loadHistory() {
     // Hämta eventuell sparad historik
+    const savedHistory = localStorage.getItem("history");
 
     // Uppdatera history
+
+    if (savedHistory) {
+        history = JSON.parse(savedHistory);
+    }
 }
 
 
@@ -119,7 +151,30 @@ function loadHistory() {
 function renderHistory() {
     // Rensa tidigare visad historik
 
+    historySection.innerHTML = "";
+
     // Skriv ut innehållet i history till DOM
+
+    for (let i = history.length - 1; i >= 0; i--) {
+        const studentCard = history[i];
+        const historyItem = document.createElement("div");
+
+        historyItem.style.fontFamily = studentCard.font;
+
+        const nameElement = document.createElement("p");
+        nameElement.textContent = studentCard.name;
+        historyItem.appendChild(nameElement);
+
+        const emailElement = document.createElement("p");
+        emailElement.textContent = studentCard.email;
+        historyItem.appendChild(emailElement);
+
+        const phoneElement = document.createElement("p");
+        phoneElement.textContent = studentCard.phone;
+        historyItem.appendChild(phoneElement);
+
+        historySection.appendChild(historyItem);
+    }
 }
 
 
@@ -128,8 +183,20 @@ function renderHistory() {
  */
 function clearForm() {
     // Återställ formulär och studentkort
+    form.reset();
+
+    previewFullname.textContent = "Namn";
+    previewEmail.textContent = "E-post";
+    previewPhone.textContent = "Telefon";
+
+    previewFullname.style.fontFamily = "";
+    previewEmail.style.fontFamily = "";
+    previewPhone.style.fontFamily = "";
 
     // Rensa eventuella felmeddelanden
+
+    errors = [];
+    displayErrors();
 }
 
 
@@ -138,8 +205,13 @@ function clearForm() {
  */
 function deleteHistory() {
     // Radera sparad historik
+    localStorage.removeItem("history");
 
     // Uppdatera history och visningen på sidan
+    history = [];
+    renderHistory();
+
+
 }
 
 
@@ -148,8 +220,10 @@ function deleteHistory() {
 form.addEventListener("submit", function(event) {
     event.preventDefault();
 
-    validateForm();
-})
+    if (validateForm()) {
+        createStudentCard();
+    }
+});
 
 // När formuläret skickas:
 // - validera inmatningen
@@ -157,6 +231,11 @@ form.addEventListener("submit", function(event) {
 
 
 // När användaren klickar på "Rensa"
+clearButton.addEventListener("click", function() {
+    clearForm();
+
+});
+
 
 
 // När användaren klickar på "Radera historik"
@@ -164,3 +243,6 @@ form.addEventListener("submit", function(event) {
 
 // När sidan laddas:
 // - läs in och visa eventuell tidigare historik
+
+loadHistory();
+renderHistory();
