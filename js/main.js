@@ -1,7 +1,7 @@
 "use strict";
 /*
  * Laboration 5 - Studentkortsgenerator
- * Namn: DITT NAMN
+ * Namn: Jeanette Söderman
  */
 
 // Hämta element från DOM
@@ -33,11 +33,32 @@ let history = [];
  * @returns {boolean}
  */
 function validateForm() {
+
+    errors = [];
+
     // Kontrollera formulärets obligatoriska fält
+    if (fullnameInput.value === "") {
+        
+        errors.push("Ett namn måste anges"); 
+    }
+
+    if (emailInput.value === "") {
+
+        errors.push("En emailadress måste anges");
+    }
+
+    if (phoneInput.value === "") {
+
+        errors.push("Ett telefonnummer måste anges");
+    }
 
     // Visa eventuella felmeddelanden
 
+    displayErrors();
+
     // Returnera resultatet (true eller false) av valideringen
+
+    return errors.length === 0;
 }
 
 
@@ -46,8 +67,17 @@ function validateForm() {
  */
 function displayErrors() {
     // Rensa tidigare felmeddelanden
+    errorList.innerHTML = "";
 
     // Skriv ut aktuella felmeddelanden till DOM
+    errors.forEach(error => {
+        const liEl = document.createElement("li");
+        const textNode = document.createTextNode(error);
+
+        liEl.appendChild(textNode);
+        errorList.appendChild(liEl);
+
+    });
 }
 
 
@@ -114,6 +144,12 @@ function deleteHistory() {
 
 
 // Eventlyssnare
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    validateForm();
+})
 
 // När formuläret skickas:
 // - validera inmatningen
